@@ -6,3 +6,5 @@ const _insertHtml = (element, location, template) => element.insertAdjacentHTML(
 const _render = (element, content) => element.innerHTML = content
 // TODO => Create Unique ID
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substring(2);
+
+const _randomfew = (arr, amount) => arr.sort((a, b) => Math.random > 0.5).splice(0, amount) 

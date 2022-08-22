@@ -18,44 +18,54 @@ const voteCount = document.getElementById('vote-count')
 const startDate = document.getElementById('start-date')
 const endDate = document.getElementById('end-date')
 const filterButton = document.getElementById('filter')
-//daamate 1 xilaki da mand gamova ekranze shemtxvevit shercheuli 3 pilmi
+const three = document.getElementById('three')
+// daamate 1 xilaki da mand gamova ekranze shemtxvevit shercheuli 3 pilmi
 filterButton.addEventListener('click', async(e) => {
     const response =  await fetch(`${baseUrl}${moviesInTheaters}${api_key}`)
     const data = await response.json()
     let {results} = data
+    //repeat 30 times 
+    results = results.map(item => {
+        if (Math.random() > 0.5) return {...item, adult: true}
+        return item 
+    })
 
-    results = results.map((item) => {
-        if ( Math.random() > 0.5 )  return {...item,  adult:true, release_date: `2016-10-30`}
-        else return item
-     })
-    
-    let filtered= []
-    if (adultOr.value !== 'none'){
-        if (Boolean(Number(adultOr.value)))  filtered = results.filter((item) => item.adult)
-        else filtered = results.filter((item) => !item.adult)
+    let filtered = [] 
+    if(adultOr.value !== 'none') {
+        if(Boolean(Number(adultOr.value))) filtered = results.filter((item) => item.adult)
+        else filtered = results.filter((item) => !item.adult) 
     }
 
+    if(voteCount.value) {
+        if(filtered.length) filtered = filtered.filter(item => item.vote_count >= Number(voteCount.value))
+        else filtered = results.filter(item => item.vote_count >= Number(voteCount.value))
+    }
 
-   if(voteCount.value) {
-        if (filtered.length) filtered = filtered.filter((item) => item.vote_count >= Number(voteCount.value))
-        else  filtered = results.filter((item) => item.vote_count >= Number(voteCount.value))
-   }
+    const start = startDate.value ? Number(startDate.value) : 0
+    const end = endDate.value ? Number(endDate.value) : 3000
 
-   const start = startDate.value ? Number(startDate.value) : 0
-   const end = endDate.value ? Number(endDate.value) : 3000
-
-   if (filtered.length) {
-        filtered = filtered.filter((item) => {
+    if(filtered.length) {
+        filtered = filtered.filter(item => {
             const year = Number(item.release_date.split('-')[0])
-            return year >= start && year <= end
-        }) 
-   } else {
-        filtered = results.filter((item) => {
+            return year >= start && year <= end 
+        })
+    } else {
+        filtered = results.filter(item => {
             const year = Number(item.release_date.split('-')[0])
-            return year >= start && year <= end
-        }) 
-   }
-    console.log(filtered, 'filtered')
- 
+            return year >= start && year <= end 
+        })
+    }
 
+   _render(renderRow, filtered.map(item => $movie(item)).join(''))
+
+   
 })
+three.addEventListener('click', async(e) => {
+    const response =  await fetch(`${baseUrl}${moviesInTheaters}${api_key}`)
+    const data = await response.json()
+    const {results} = data
+    let answer = results.sort((a, b) => 0.5 - Math.random()).splice(0, 3)
+    _render(renderRow, answer.map(info => $movie(info)).join(''))
+    
+})
+
