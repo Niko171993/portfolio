@@ -3,6 +3,7 @@
 @import url('base.css');
 
 .remove {
-    list-style: none 
-    
+    list-style: none ;
+    text-decoration: none;
+    color: white;
 }
